@@ -1,0 +1,1633 @@
+{
+    "info": {
+        "_postman_id": "unique-id",
+        "name": "Task Management API",
+        "description": "Complete API collection for Task Management System",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [{
+            "name": "Auth",
+            "item": [{
+                    "name": "Login",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has token', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('token');",
+                                "    if (jsonData.data && jsonData.data.token) {",
+                                "        pm.environment.set('token', jsonData.data.token);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"{{test_user_email}}\",\n    \"password\": \"{{test_user_password}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/login",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Me",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has user data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('user');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/auth/me",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["auth", "me"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Roles",
+            "item": [{
+                    "name": "Create Role",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 201', function () {",
+                                "    pm.response.to.have.status(201);",
+                                "});",
+                                "",
+                                "pm.test('Response has role data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "    if (jsonData.data && jsonData.data._id) {",
+                                "        pm.environment.set('role_id', jsonData.data._id);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"role_name\": \"super_admin\",\n    \"is_active\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/roles/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["roles", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Roles",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/roles",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["roles"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Users",
+            "item": [{
+                    "name": "Create User",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 201', function () {",
+                                "    pm.response.to.have.status(201);",
+                                "});",
+                                "",
+                                "pm.test('Response has user data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "    if (jsonData.data && jsonData.data._id) {",
+                                "        pm.environment.set('user_id', jsonData.data._id);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"test123\",\n    \"roles\": [\"{{role_id}}\"],\n    \"first_name\": \"Test\",\n    \"last_name\": \"User\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Users",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/users",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update User",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "PUT",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"_id\": \"{{user_id}}\",\n    \"first_name\": \"Updated\",\n    \"last_name\": \"User\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/users/:id",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users", ":id"],
+                            "variable": [{
+                                "key": "id",
+                                "value": "{{user_id}}"
+                            }]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete User",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/users",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["users"],
+                            "body": {
+                                "mode": "raw",
+                                "raw": "{\n    \"_id\": \"{{user_id}}\"\n}"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Projects",
+            "item": [{
+                    "name": "Create Project",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 201', function () {",
+                                "    pm.response.to.have.status(201);",
+                                "});",
+                                "",
+                                "pm.test('Response has project data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "    if (jsonData.data && jsonData.data._id) {",
+                                "        pm.environment.set('project_id', jsonData.data._id);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"project_name\": \"Test Project\",\n    \"project_owner\": \"Test Owner\",\n    \"is_active\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/project/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["project", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Projects",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/project",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["project"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Project by ID",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has project data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/project/{{project_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["project", "{{project_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Project",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "PUT",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"project_name\": \"Updated Project\",\n    \"is_active\": true\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/project/update/{{project_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["project", "update", "{{project_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Project",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/project/delete/{{project_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["project", "delete", "{{project_id}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Tasks",
+            "item": [{
+                    "name": "Create Task",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 201', function () {",
+                                "    pm.response.to.have.status(201);",
+                                "});",
+                                "",
+                                "pm.test('Response has task data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "    if (jsonData.data && jsonData.data._id) {",
+                                "        pm.environment.set('task_id', jsonData.data._id);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Test Task\",\n    \"description\": \"Test Description\",\n    \"project_id\": \"{{project_id}}\",\n    \"assigned_to\": \"{{user_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/task/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["task", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Tasks",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/task",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["task"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Task",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"_id\": \"{{task_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/task/delete",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["task", "delete"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Task",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"_id\": \"{{task_id}}\",\n    \"name\": \"Updated Task\",\n    \"status\": \"in_progress\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/task/update",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["task", "update"]
+                        }
+                    }
+                },
+                {
+                    "name": "Move Task",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"taskId\": \"{{task_id}}\",\n    \"sourceColumnId\": \"{{source_column_id}}\",\n    \"destinationColumnId\": \"{{destination_column_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/task/move",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["task", "move"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Remarks",
+            "item": [{
+                    "name": "Create Remark",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 201', function () {",
+                                "    pm.response.to.have.status(201);",
+                                "});",
+                                "",
+                                "pm.test('Response has remark data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "    if (jsonData.data && jsonData.data._id) {",
+                                "        pm.environment.set('remark_id', jsonData.data._id);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Test Remark\",\n    \"description\": \"Test Description\",\n    \"project\": \"{{project_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/remarks/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["remarks", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Remarks",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/remarks",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["remarks"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Remark by ID",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has remark data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/remarks/{{remark_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["remarks", "{{remark_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Remark",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"_id\": \"{{remark_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/remarks/delete",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["remarks", "delete"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get All Project Data",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('object');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/remarks/allprojectdata",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["remarks", "allprojectdata"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Remark Statistics",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('object');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/remarks/statistics/days",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["remarks", "statistics", "days"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Types",
+            "item": [{
+                    "name": "Get Types",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/types",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["types"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Type by ID",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has type data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/types/{{type_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["types", "{{type_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Type",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has type data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "    if (jsonData.data && jsonData.data._id) {",
+                                "        pm.environment.set('type_id', jsonData.data._id);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"type_name\": \"Test Type\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/types/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["types", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Type",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has type data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "PUT",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"type_name\": \"Updated Type\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/types/update/{{type_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["types", "update", "{{type_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Type",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/types/delete/{{type_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["types", "delete", "{{type_id}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Status",
+            "item": [{
+                    "name": "Get Statuses",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/status",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["status"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Status by ID",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has status data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/status/{{status_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["status", "{{status_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Status",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has status data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "    if (jsonData.data && jsonData.data._id) {",
+                                "        pm.environment.set('status_id', jsonData.data._id);",
+                                "    }",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status_name\": \"Test Status\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/status/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["status", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Status",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has status data', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data).to.have.property('_id');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "PUT",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status_name\": \"Updated Status\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/status/update/{{status_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["status", "update", "{{status_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Status",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/status/delete/{{status_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["status", "delete", "{{status_id}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Column",
+            "item": [{
+                    "name": "Get Columns with Tasks",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response is array', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/column/withtask",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["column", "withtask"]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Column",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"New Column\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/column/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["column", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Column",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"columnId\": \"{{column_id}}\",\n    \"columnName\": \"Updated Column\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/column/update",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["column", "update"]
+                        }
+                    }
+                },
+                {
+                    "name": "Move Column",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"newOrdered\": [\"{{column_id_1}}\", \"{{column_id_2}}\", \"{{column_id_3}}\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/column/move",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["column", "move"]
+                        }
+                    }
+                },
+                {
+                    "name": "Clear Column",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"columnId\": \"{{column_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/column/clear",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["column", "clear"]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Column",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.data.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"columnId\": \"{{column_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/column/delete",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["column", "delete"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Comments",
+            "item": [{
+                    "name": "Add Comment",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"remarkId\": \"{{remark_id}}\",\n    \"text\": \"Test comment\",\n    \"files\": [],\n    \"currentstatus\": \"active\",\n    \"user\": \"{{user_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/comments/add",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["comments", "add"]
+                        }
+                    }
+                },
+                {
+                    "name": "Add Comment with Files",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "{{token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"remarkId\": \"{{remark_id}}\",\n    \"text\": \"Test comment with files\",\n    \"fileIds\": [\"{{file_id}}\"],\n    \"currentstatus\": \"active\",\n    \"user\": \"{{user_id}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/comments/add-comment",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["comments", "add-comment"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Comments by Remark ID",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/comments/{{remark_id}}",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["comments", "{{remark_id}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Comments with Files by Remark ID",
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "exec": [
+                                "pm.test('Status code is 200', function () {",
+                                "    pm.response.to.have.status(200);",
+                                "});",
+                                "",
+                                "pm.test('Response has success', function () {",
+                                "    var jsonData = pm.response.json();",
+                                "    pm.expect(jsonData.success).to.be.true;",
+                                "});"
+                            ]
+                        }
+                    }],
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                            "key": "Authorization",
+                            "value": "{{token}}"
+                        }],
+                        "url": {
+                            "raw": "{{baseUrl}}/comments/remarks/{{remark_id}}/comments",
+                            "host": ["{{baseUrl}}"],
+                            "path": ["comments", "remarks", "{{remark_id}}", "comments"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Board",
+            "item": [{
+                "name": "Get Board Data",
+                "event": [{
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status code is 200', function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "pm.test('Response has board data', function () {",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.expect(jsonData).to.have.property('columns');",
+                            "    pm.expect(jsonData).to.have.property('tasks');",
+                            "    pm.expect(jsonData).to.have.property('order');",
+                            "});"
+                        ]
+                    }
+                }],
+                "request": {
+                    "method": "GET",
+                    "header": [{
+                        "key": "Authorization",
+                        "value": "{{token}}"
+                    }],
+                    "url": {
+                        "raw": "{{baseUrl}}/board/data",
+                        "host": ["{{baseUrl}}"],
+                        "path": ["board", "data"]
+                    }
+                }
+            }]
+        }
+    ]
+}
