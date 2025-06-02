@@ -1,6 +1,6 @@
 var express = require("express");
-const bcrypt = require("bcrypt-nodejs");
-const is = require("is_js");
+const bcrypt = require("bcrypt");
+const is = require("validator");
 
 const Users = require("../db/models/Users");
 const Response = require("../lib/Response");
